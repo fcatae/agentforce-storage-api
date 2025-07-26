@@ -26,7 +26,7 @@ Content-Type: application/json
 GET http://localhost:8081/api/storage
 
 ###
-PUT http://localhost:8081/api/queues/q1
+POST http://localhost:8081/api/queues/q1
 Content-Type: application/json
 
 {
@@ -36,3 +36,9 @@ Content-Type: application/json
 
 ###
 GET http://localhost:8081/api/queues/q1
+
+###
+POST http://localhost:8081/api/queues/invalid
+Content-Type: application/json
+
+{ "test": "invalid queue" }

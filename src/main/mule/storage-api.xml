@@ -1,27 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<mule xmlns:vm="http://www.mulesoft.org/schema/mule/vm" xmlns:os="http://www.mulesoft.org/schema/mule/os" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd 
-http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/current/mule-os.xsd
-http://www.mulesoft.org/schema/mule/vm http://www.mulesoft.org/schema/mule/vm/current/mule-vm.xsd">
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:os="http://www.mulesoft.org/schema/mule/os" xmlns:vm="http://www.mulesoft.org/schema/mule/vm" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd  http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/current/mule-os.xsd http://www.mulesoft.org/schema/mule/vm http://www.mulesoft.org/schema/mule/vm/current/mule-vm.xsd">
     <http:listener-config name="storage-api-httpListenerConfig">
         <http:listener-connection host="0.0.0.0" port="8081" />
     </http:listener-config>
-    <apikit:config name="storage-api-config" api="resource::aa1235f7-05a6-4b74-9875-d848d3ec08cc:storage-api:1.0.0:raml:zip:storage-api.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
+    <apikit:config name="storage-api-config" api="resource::aa1235f7-05a6-4b74-9875-d848d3ec08cc:storage-api:1.0.1:raml:zip:storage-api.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
     <os:object-store name="current-storage-store" doc:name="Object store" doc:id="ef2cf9ca-822c-4c0a-a98b-e77d020334fc" />
-	<vm:config name="VM_Config" doc:name="VM Config" doc:id="bc62ca76-f6e9-44f9-9a9e-0b040d846d50" >
-		<vm:queues >
-			<vm:queue queueName="q0" />
-			<vm:queue queueName="q1" />
-			<vm:queue queueName="q2" />
-			<vm:queue queueName="q3" />
-			<vm:queue queueName="q4" />
-			<vm:queue queueName="q5" />
-			<vm:queue queueName="q6" />
-			<vm:queue queueName="q7" />
-			<vm:queue queueName="q8" />
-			<vm:queue queueName="q9" />
-		</vm:queues>
-	</vm:config>
-	<flow name="storage-api-main">
+    <vm:config name="VM_Config" doc:name="VM Config" doc:id="bc62ca76-f6e9-44f9-9a9e-0b040d846d50">
+        <vm:queues>
+            <vm:queue queueName="q0" />
+            <vm:queue queueName="q1" />
+            <vm:queue queueName="q2" />
+            <vm:queue queueName="q3" />
+            <vm:queue queueName="q4" />
+            <vm:queue queueName="q5" />
+            <vm:queue queueName="q6" />
+            <vm:queue queueName="q7" />
+            <vm:queue queueName="q8" />
+            <vm:queue queueName="q9" />
+        </vm:queues>
+    </vm:config>
+    <flow name="storage-api-main">
         <http:listener config-ref="storage-api-httpListenerConfig" path="/api/*">
             <http:response statusCode="#[vars.httpStatus default 200]">
                 <http:headers>#[vars.outboundHeaders default {}]</http:headers>
@@ -142,60 +140,59 @@ output application/json
     </flow>
     <flow name="get:\storage\(item):storage-api-config">
         <set-variable value="#[attributes.uriParams.'item']" doc:name="Item" doc:id="6935246f-712d-4ce2-933a-3e927eee04de" variableName="item" />
-		<os:retrieve doc:name="Retrieve" doc:id="e9fdc417-76ee-4ee6-b941-ac542ca5b872" key="#[vars.item]" objectStore="current-storage-store">
-			<os:default-value><![CDATA[#[{}]]]></os:default-value>
-		</os:retrieve>
-		<ee:transform doc:name="Transform Message" doc:id="437b1bb0-e1bd-402f-90c3-2fab193fd4da">
-			<ee:message>
-				<ee:set-payload><![CDATA[%dw 2.0
+        <os:retrieve doc:name="Retrieve" doc:id="e9fdc417-76ee-4ee6-b941-ac542ca5b872" key="#[vars.item]" objectStore="current-storage-store">
+            <os:default-value><![CDATA[#[{}]]]></os:default-value>
+        </os:retrieve>
+        <ee:transform doc:name="Transform Message" doc:id="437b1bb0-e1bd-402f-90c3-2fab193fd4da">
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
 output application/json
 ---
 payload]]></ee:set-payload>
-			</ee:message>
-		</ee:transform>
-		<logger level="INFO" message="get:\storage\(item):storage-api-config" />
+            </ee:message>
+        </ee:transform>
+        <logger level="INFO" message="get:\storage\(item):storage-api-config" />
     </flow>
-	<flow name="put:\storage\(item):storage-api-config">
-		<set-variable value="#[attributes.uriParams.'item']" doc:name="Item" doc:id="7b83e150-fc1c-4a8b-a356-9d5d4fc456ac" variableName="item" />
-		<os:store doc:name="Store" doc:id="380d3fb1-910b-4b56-8470-6970c58e83e5" key="#[vars.item]" objectStore="current-storage-store"/>
-		<ee:transform doc:name="Transform Message" doc:id="b7fe4160-5754-46bb-ae92-2b0105b4a7e8" >
-			<ee:message >
-				<ee:set-payload ><![CDATA[%dw 2.0
+    <flow name="put:\storage\(item):application\json:storage-api-config">
+        <set-variable value="#[attributes.uriParams.'item']" doc:name="Item" doc:id="7b83e150-fc1c-4a8b-a356-9d5d4fc456ac" variableName="item" />
+        <os:store doc:name="Store" doc:id="380d3fb1-910b-4b56-8470-6970c58e83e5" key="#[vars.item]" objectStore="current-storage-store" />
+        <ee:transform doc:name="Transform Message" doc:id="b7fe4160-5754-46bb-ae92-2b0105b4a7e8">
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
 output application/json
 ---
 {
 	message: 'Success'
 }]]></ee:set-payload>
-			</ee:message>
-		</ee:transform>
-		<logger level="INFO" message="#['put:\storage\${item}:storage-api-config']" />
+            </ee:message>
+        </ee:transform>
+        <logger level="INFO" message='#["PUT /storage/$(vars.item)"]' />
     </flow>
 	<flow name="delete:\storage\(item):storage-api-config">
         <set-variable value="#[attributes.uriParams.'item']" doc:name="Item" doc:id="7fbd6789-bc94-44e7-a786-5e6d1d74ffc4" variableName="item" />
-		<os:remove doc:name="Delete" doc:id="9037a8c6-99a9-4c47-b4dd-2431e74cfd3d" key="#[vars.item]" objectStore="current-storage-store"/>
-		<logger level="INFO" message="delete:\storage\(item):storage-api-config" />
+        <os:remove doc:name="Delete" doc:id="9037a8c6-99a9-4c47-b4dd-2431e74cfd3d" key="#[vars.item]" objectStore="current-storage-store" />
+        <logger level="INFO" message="delete:\storage\(item):storage-api-config" />
     </flow>
-	<flow name="get:\storage:storage-api-config">
+    <flow name="get:\storage:storage-api-config">
         <os:retrieve-all-keys doc:name="Retrieve all keys" doc:id="ae66b719-5f74-4221-b0d0-1a471366824c" objectStore="current-storage-store" />
-		<ee:transform doc:name="Transform Message" doc:id="8d8e9650-9972-4d21-ba89-1762d29cd49b">
-			<ee:message>
-				<ee:set-payload><![CDATA[%dw 2.0
+        <ee:transform doc:name="Transform Message" doc:id="8d8e9650-9972-4d21-ba89-1762d29cd49b">
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
 output application/json
 ---
 {
 	items: payload	
-}
-]]></ee:set-payload>
-			</ee:message>
-		</ee:transform>
-		<logger level="INFO" message="get:\storage:storage-api-config" />
+}]]></ee:set-payload>
+            </ee:message>
+        </ee:transform>
+        <logger level="INFO" message="get:\storage:storage-api-config" />
     </flow>
-	<flow name="post:\storage:storage-api-config">
-		<set-variable value="#[uuid()]" doc:name="Item" doc:id="7cdcc3b7-6ae3-4d99-ae56-b419e97e2641" variableName="item"/>
+    <flow name="post:\storage:application\json:storage-api-config">
+        <set-variable value="#[uuid()]" doc:name="Item" doc:id="7cdcc3b7-6ae3-4d99-ae56-b419e97e2641" variableName="item" />
 		<os:store doc:name="Store" doc:id="99f135db-1da1-45cc-8f96-e2e79cbddc90" key="#[vars.item]" objectStore="current-storage-store" />
-		<ee:transform doc:name="Transform Message" doc:id="66fe130e-8430-452f-b491-fd1b1d7f7b79" >
-			<ee:message >
-				<ee:set-payload ><![CDATA[%dw 2.0
+		<ee:transform doc:name="Transform Message" doc:id="66fe130e-8430-452f-b491-fd1b1d7f7b79">
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
 output application/json
 ---
 {
@@ -203,44 +200,63 @@ output application/json
 	key: vars.item,
 	value: payload,
 }]]></ee:set-payload>
-			</ee:message>
-		</ee:transform>
-		<logger level="INFO" message="post:\storage:storage-api-config" />
+            </ee:message>
+        </ee:transform>
+		<logger level="INFO" message="post:\storage:application\json:storage-api-config" />
     </flow>
 	<flow name="get:\queues:storage-api-config">
         <logger level="INFO" message="get:\queues:storage-api-config" />
     </flow>
-    <flow name="put:\queues\(queue):storage-api-config">
-        <set-variable value="#[attributes.uriParams.'queue']" doc:name="Queue" doc:id="cc4ffd8d-0caf-48c1-9fe0-f140f6cfd3ca" variableName="queue" />
-		<vm:publish doc:name="Publish" doc:id="415de44d-792e-45af-a15f-5ea095bd4a59" config-ref="VM_Config" queueName="#[vars.queue]"/>
-        <ee:transform doc:name="Transform Message" doc:id="ea22e7d6-5970-4c5a-b648-1443d68b30fd">
-			<ee:message>
-				<ee:set-payload><![CDATA[%dw 2.0
+	<flow name="post:\queues\(queue):application\json:storage-api-config">
+		<set-variable value="#[attributes.uriParams.'queue']" doc:name="Queue" doc:id="cc4ffd8d-0caf-48c1-9fe0-f140f6cfd3ca" variableName="queue" />
+		<try doc:name="Try" doc:id="637a44f3-e80b-4255-ae53-1638560b741a" >
+			<vm:publish doc:name="Publish" doc:id="415de44d-792e-45af-a15f-5ea095bd4a59" config-ref="VM_Config" queueName="#[vars.queue]" />
+			<ee:transform doc:name="Transform Message" doc:id="ea22e7d6-5970-4c5a-b648-1443d68b30fd">
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
 output application/json
 ---
 {
 	message: 'Success'
 }]]></ee:set-payload>
+            </ee:message>
+        </ee:transform>
+			<error-handler >
+				<on-error-continue enableNotifications="true" logException="false" doc:name="On Error Continue" doc:id="f783c833-2e55-4143-a6a2-80311ba8b8ad" type="ANY" when='(error.errorType.identifier == "UNKNOWN") and (error.description endsWith "is not defined")'>
+					<set-variable value="404" doc:name="Set Variable" doc:id="8f28418e-b0ea-4cc0-912c-51d81c93ffa8" variableName="httpStatus"/>
+					<ee:transform doc:name="Transform Message" doc:id="19c7ae4d-9de1-4f58-a12c-35f5b40d9f90">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+	message: error.description, 
+	queue: vars.queue,
+	body: payload
+}]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
-		<logger level="INFO" message="put:\queues\(queue):storage-api-config" />
+				</on-error-continue>
+			</error-handler>
+		</try>
+		<logger level="INFO" message="post:\queues\(queue):storage-api-config" />
     </flow>
 	<flow name="get:\queues\(queue):storage-api-config">
         <set-variable value="#[attributes.uriParams.'queue']" doc:name="Queue" doc:id="35825a0b-8422-4e4f-9c8b-4cb5240e0807" variableName="queue" />
-        <vm:consume doc:name="Consume" doc:id="cd9dee5e-b537-454a-8aad-89b9733fe41d" config-ref="VM_Config" queueName="#[vars.queue]" timeout="1"/>
-		<logger level="INFO" message="get:\queues\(queue):storage-api-config" />
-		<error-handler >
-			<on-error-continue enableNotifications="false" logException="false" doc:name="On Error Continue" doc:id="02b9ebb0-6adc-4337-8416-92c81fb75ebc" type="VM:EMPTY_QUEUE">
-				<set-variable value="204" doc:name="HTTP 204" doc:id="e01d48ef-c8bd-4168-a6b0-a53acfdebe83" variableName="httpStatus"/>
-				<ee:transform doc:name="Empty Response" doc:id="ffb01c6c-a392-42ad-af6b-581642fcbf93" >
-					<ee:message >
-						<ee:set-payload ><![CDATA[%dw 2.0
+        <vm:consume doc:name="Consume" doc:id="cd9dee5e-b537-454a-8aad-89b9733fe41d" config-ref="VM_Config" queueName="#[vars.queue]" timeout="1" />
+        <logger level="INFO" message="get:\queues\(queue):storage-api-config" />
+        <error-handler>
+            <on-error-continue enableNotifications="false" logException="false" doc:name="On Error Continue" doc:id="02b9ebb0-6adc-4337-8416-92c81fb75ebc" type="VM:EMPTY_QUEUE">
+                <set-variable value="204" doc:name="HTTP 204" doc:id="e01d48ef-c8bd-4168-a6b0-a53acfdebe83" variableName="httpStatus" />
+                <ee:transform doc:name="Empty Response" doc:id="ffb01c6c-a392-42ad-af6b-581642fcbf93">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
 output application/json
 ---
 null]]></ee:set-payload>
-					</ee:message>
-				</ee:transform>
-			</on-error-continue>
-		</error-handler>
+                    </ee:message>
+                </ee:transform>
+            </on-error-continue>
+        </error-handler>
     </flow>
 </mule>
