@@ -126,12 +126,19 @@ output application/json
         </error-handler>
     </flow>
     <flow name="put:\storage\(item):storage-api-config">
-        <ee:transform doc:name="Transform Message">
-            <ee:variables>
-                <ee:set-variable variableName="item">attributes.uriParams.'item'</ee:set-variable>
-            </ee:variables>
-        </ee:transform>
-        <logger level="INFO" message="put:\storage\(item):storage-api-config" />
+		<set-variable value="#[attributes.uriParams.'item']" doc:name="Item" doc:id="7b83e150-fc1c-4a8b-a356-9d5d4fc456ac" variableName="item" />
+		<os:store doc:name="Store" doc:id="380d3fb1-910b-4b56-8470-6970c58e83e5" key="#[vars.item]" objectStore="current-storage-store"/>
+		<ee:transform doc:name="Transform Message" doc:id="b7fe4160-5754-46bb-ae92-2b0105b4a7e8" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	message: 'Success'
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" message="#['put:\storage\${item}:storage-api-config']" />
     </flow>
     <flow name="put:\queues\(queue):storage-api-config">
         <ee:transform doc:name="Transform Message">
@@ -184,6 +191,6 @@ output application/json
         <logger level="INFO" message="get:\queues\(queue):storage-api-config" />
     </flow>
     <flow name="post:\storage:storage-api-config">
-        <logger level="INFO" message="post:\storage:storage-api-config" />
+		<logger level="INFO" message="post:\storage:storage-api-config" />
     </flow>
 </mule>

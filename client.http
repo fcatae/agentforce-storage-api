@@ -3,3 +3,10 @@
 GET http://localhost:8081/api/storage
 
 ###
+PUT http://localhost:8081/api/storage/teste
+Content-Type: application/json
+
+{
+    "name": "abc",
+    "score": 1
+}
