@@ -229,5 +229,18 @@ output application/json
         <set-variable value="#[attributes.uriParams.'queue']" doc:name="Queue" doc:id="35825a0b-8422-4e4f-9c8b-4cb5240e0807" variableName="queue" />
         <vm:consume doc:name="Consume" doc:id="cd9dee5e-b537-454a-8aad-89b9733fe41d" config-ref="VM_Config" queueName="#[vars.queue]" timeout="1"/>
 		<logger level="INFO" message="get:\queues\(queue):storage-api-config" />
+		<error-handler >
+			<on-error-continue enableNotifications="false" logException="false" doc:name="On Error Continue" doc:id="02b9ebb0-6adc-4337-8416-92c81fb75ebc" type="VM:EMPTY_QUEUE">
+				<set-variable value="204" doc:name="HTTP 204" doc:id="e01d48ef-c8bd-4168-a6b0-a53acfdebe83" variableName="httpStatus"/>
+				<ee:transform doc:name="Empty Response" doc:id="ffb01c6c-a392-42ad-af6b-581642fcbf93" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+null]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</on-error-continue>
+		</error-handler>
     </flow>
 </mule>
