@@ -222,9 +222,8 @@ output application/json
             </ee:message>
         </ee:transform>
 			<error-handler >
-				<on-error-continue enableNotifications="true" logException="false" doc:name="On Error Continue" doc:id="f783c833-2e55-4143-a6a2-80311ba8b8ad" type="ANY" when='(error.errorType.identifier == "UNKNOWN") and (error.description endsWith "is not defined")'>
-					<set-variable value="404" doc:name="Set Variable" doc:id="8f28418e-b0ea-4cc0-912c-51d81c93ffa8" variableName="httpStatus"/>
-					<ee:transform doc:name="Transform Message" doc:id="19c7ae4d-9de1-4f58-a12c-35f5b40d9f90">
+				<on-error-propagate enableNotifications="false" logException="false" doc:name="On Error Propagate" doc:id="6ba47ab9-746b-4cf1-be64-582a4fbcf506" type="ANY" when='(error.errorType.identifier == "UNKNOWN") and (error.description endsWith "is not defined")'>
+					<ee:transform doc:name="Error message" doc:id="19c7ae4d-9de1-4f58-a12c-35f5b40d9f90">
 			<ee:message>
 				<ee:set-payload><![CDATA[%dw 2.0
 output application/json
@@ -236,10 +235,16 @@ output application/json
 }]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
-				</on-error-continue>
+					<raise-error doc:name="Raise error" doc:id="7566f0b2-ab0a-42da-9588-af969cbadc1a" type="APP:INVALID_QUEUE_NAME" description="Invalid queue name"/>
+				</on-error-propagate>
 			</error-handler>
 		</try>
 		<logger level="INFO" message="post:\queues\(queue):storage-api-config" />
+		<error-handler >
+			<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="6f4f2783-2b8e-416f-8304-92188b0d20d7" type="APP:INVALID_QUEUE_NAME">
+				<set-variable value="404" doc:name="Set Variable" doc:id="8f28418e-b0ea-4cc0-912c-51d81c93ffa8" variableName="httpStatus" />
+			</on-error-continue>
+		</error-handler>
     </flow>
 	<flow name="get:\queues\(queue):storage-api-config">
         <set-variable value="#[attributes.uriParams.'queue']" doc:name="Queue" doc:id="35825a0b-8422-4e4f-9c8b-4cb5240e0807" variableName="queue" />
