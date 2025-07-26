@@ -125,7 +125,22 @@ output application/json
             </on-error-propagate>
         </error-handler>
     </flow>
-    <flow name="put:\storage\(item):storage-api-config">
+    <flow name="get:\storage\(item):storage-api-config">
+        <set-variable value="#[attributes.uriParams.'item']" doc:name="Item" doc:id="6935246f-712d-4ce2-933a-3e927eee04de" variableName="item" />
+		<os:retrieve doc:name="Retrieve" doc:id="e9fdc417-76ee-4ee6-b941-ac542ca5b872" key="#[vars.item]" objectStore="current-storage-store">
+			<os:default-value><![CDATA[#[{}]]]></os:default-value>
+		</os:retrieve>
+		<ee:transform doc:name="Transform Message" doc:id="437b1bb0-e1bd-402f-90c3-2fab193fd4da">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" message="get:\storage\(item):storage-api-config" />
+    </flow>
+	<flow name="put:\storage\(item):storage-api-config">
 		<set-variable value="#[attributes.uriParams.'item']" doc:name="Item" doc:id="7b83e150-fc1c-4a8b-a356-9d5d4fc456ac" variableName="item" />
 		<os:store doc:name="Store" doc:id="380d3fb1-910b-4b56-8470-6970c58e83e5" key="#[vars.item]" objectStore="current-storage-store"/>
 		<ee:transform doc:name="Transform Message" doc:id="b7fe4160-5754-46bb-ae92-2b0105b4a7e8" >
@@ -140,30 +155,15 @@ output application/json
 		</ee:transform>
 		<logger level="INFO" message="#['put:\storage\${item}:storage-api-config']" />
     </flow>
-    <flow name="put:\queues\(queue):storage-api-config">
-        <ee:transform doc:name="Transform Message">
-            <ee:variables>
-                <ee:set-variable variableName="queue">attributes.uriParams.'queue'</ee:set-variable>
-            </ee:variables>
-        </ee:transform>
-        <logger level="INFO" message="put:\queues\(queue):storage-api-config" />
+	<flow name="delete:\storage\(item):storage-api-config">
+        <set-variable value="#[attributes.uriParams.'item']" doc:name="Item" doc:id="7fbd6789-bc94-44e7-a786-5e6d1d74ffc4" variableName="item" />
+		<logger level="INFO" message="delete:\storage\(item):storage-api-config" />
     </flow>
-    <flow name="delete:\storage\(item):storage-api-config">
-        <ee:transform doc:name="Transform Message">
-            <ee:variables>
-                <ee:set-variable variableName="item">attributes.uriParams.'item'</ee:set-variable>
-            </ee:variables>
-        </ee:transform>
-        <logger level="INFO" message="delete:\storage\(item):storage-api-config" />
-    </flow>
-    <flow name="get:\queues:storage-api-config">
-        <logger level="INFO" message="get:\queues:storage-api-config" />
-    </flow>
-    <flow name="get:\storage:storage-api-config">
-        <os:retrieve-all-keys doc:name="Retrieve all keys" doc:id="ae66b719-5f74-4221-b0d0-1a471366824c" objectStore="current-storage-store"/>
-		<ee:transform doc:name="Transform Message" doc:id="8d8e9650-9972-4d21-ba89-1762d29cd49b" >
-			<ee:message >
-				<ee:set-payload ><![CDATA[%dw 2.0
+	<flow name="get:\storage:storage-api-config">
+        <os:retrieve-all-keys doc:name="Retrieve all keys" doc:id="ae66b719-5f74-4221-b0d0-1a471366824c" objectStore="current-storage-store" />
+		<ee:transform doc:name="Transform Message" doc:id="8d8e9650-9972-4d21-ba89-1762d29cd49b">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
 output application/json
 ---
 {
@@ -174,30 +174,26 @@ output application/json
 		</ee:transform>
 		<logger level="INFO" message="get:\storage:storage-api-config" />
     </flow>
-    <flow name="get:\storage\(item):storage-api-config">
-        <set-variable value="#[attributes.uriParams.'item']" doc:name="Item" doc:id="6935246f-712d-4ce2-933a-3e927eee04de" variableName="item" />
-		<os:retrieve doc:name="Retrieve" doc:id="e9fdc417-76ee-4ee6-b941-ac542ca5b872" key="#[vars.item]" objectStore="current-storage-store">
-			<os:default-value ><![CDATA[#[{}]]]></os:default-value>
-		</os:retrieve>
-		<ee:transform doc:name="Transform Message" doc:id="437b1bb0-e1bd-402f-90c3-2fab193fd4da" >
-			<ee:message >
-				<ee:set-payload ><![CDATA[%dw 2.0
-output application/json
----
-payload]]></ee:set-payload>
-			</ee:message>
-		</ee:transform>
-		<logger level="INFO" message="get:\storage\(item):storage-api-config" />
+	<flow name="post:\storage:storage-api-config">
+		<logger level="INFO" message="post:\storage:storage-api-config" />
     </flow>
-    <flow name="get:\queues\(queue):storage-api-config">
+	<flow name="get:\queues:storage-api-config">
+        <logger level="INFO" message="get:\queues:storage-api-config" />
+    </flow>
+    <flow name="put:\queues\(queue):storage-api-config">
+        <ee:transform doc:name="Transform Message">
+            <ee:variables>
+                <ee:set-variable variableName="queue">attributes.uriParams.'queue'</ee:set-variable>
+            </ee:variables>
+        </ee:transform>
+        <logger level="INFO" message="put:\queues\(queue):storage-api-config" />
+    </flow>
+	<flow name="get:\queues\(queue):storage-api-config">
         <ee:transform doc:name="Transform Message">
             <ee:variables>
                 <ee:set-variable variableName="queue">attributes.uriParams.'queue'</ee:set-variable>
             </ee:variables>
         </ee:transform>
         <logger level="INFO" message="get:\queues\(queue):storage-api-config" />
-    </flow>
-    <flow name="post:\storage:storage-api-config">
-		<logger level="INFO" message="post:\storage:storage-api-config" />
     </flow>
 </mule>
