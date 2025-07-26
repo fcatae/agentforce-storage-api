@@ -1,11 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<mule xmlns:os="http://www.mulesoft.org/schema/mule/os" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd 
-http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/current/mule-os.xsd">
+<mule xmlns:vm="http://www.mulesoft.org/schema/mule/vm" xmlns:os="http://www.mulesoft.org/schema/mule/os" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd 
+http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/current/mule-os.xsd
+http://www.mulesoft.org/schema/mule/vm http://www.mulesoft.org/schema/mule/vm/current/mule-vm.xsd">
     <http:listener-config name="storage-api-httpListenerConfig">
         <http:listener-connection host="0.0.0.0" port="8081" />
     </http:listener-config>
     <apikit:config name="storage-api-config" api="resource::aa1235f7-05a6-4b74-9875-d848d3ec08cc:storage-api:1.0.0:raml:zip:storage-api.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
     <os:object-store name="current-storage-store" doc:name="Object store" doc:id="ef2cf9ca-822c-4c0a-a98b-e77d020334fc" />
+	<vm:config name="VM_Config" doc:name="VM Config" doc:id="bc62ca76-f6e9-44f9-9a9e-0b040d846d50" >
+		<vm:queues >
+			<vm:queue queueName="q0" />
+			<vm:queue queueName="q1" />
+			<vm:queue queueName="q2" />
+			<vm:queue queueName="q3" />
+			<vm:queue queueName="q4" />
+			<vm:queue queueName="q5" />
+			<vm:queue queueName="q6" />
+			<vm:queue queueName="q7" />
+			<vm:queue queueName="q8" />
+			<vm:queue queueName="q9" />
+		</vm:queues>
+	</vm:config>
 	<flow name="storage-api-main">
         <http:listener config-ref="storage-api-httpListenerConfig" path="/api/*">
             <http:response statusCode="#[vars.httpStatus default 200]">
@@ -196,19 +211,23 @@ output application/json
         <logger level="INFO" message="get:\queues:storage-api-config" />
     </flow>
     <flow name="put:\queues\(queue):storage-api-config">
-        <ee:transform doc:name="Transform Message">
-            <ee:variables>
-                <ee:set-variable variableName="queue">attributes.uriParams.'queue'</ee:set-variable>
-            </ee:variables>
-        </ee:transform>
-        <logger level="INFO" message="put:\queues\(queue):storage-api-config" />
+        <set-variable value="#[attributes.uriParams.'queue']" doc:name="Queue" doc:id="cc4ffd8d-0caf-48c1-9fe0-f140f6cfd3ca" variableName="queue" />
+		<vm:publish doc:name="Publish" doc:id="415de44d-792e-45af-a15f-5ea095bd4a59" config-ref="VM_Config" queueName="#[vars.queue]"/>
+        <ee:transform doc:name="Transform Message" doc:id="ea22e7d6-5970-4c5a-b648-1443d68b30fd">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+	message: 'Success'
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" message="put:\queues\(queue):storage-api-config" />
     </flow>
 	<flow name="get:\queues\(queue):storage-api-config">
-        <ee:transform doc:name="Transform Message">
-            <ee:variables>
-                <ee:set-variable variableName="queue">attributes.uriParams.'queue'</ee:set-variable>
-            </ee:variables>
-        </ee:transform>
-        <logger level="INFO" message="get:\queues\(queue):storage-api-config" />
+        <set-variable value="#[attributes.uriParams.'queue']" doc:name="Queue" doc:id="35825a0b-8422-4e4f-9c8b-4cb5240e0807" variableName="queue" />
+        <vm:consume doc:name="Consume" doc:id="cd9dee5e-b537-454a-8aad-89b9733fe41d" config-ref="VM_Config" queueName="#[vars.queue]" timeout="1"/>
+		<logger level="INFO" message="get:\queues\(queue):storage-api-config" />
     </flow>
 </mule>

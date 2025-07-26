@@ -24,3 +24,15 @@ Content-Type: application/json
 
 ###
 GET http://localhost:8081/api/storage
+
+###
+PUT http://localhost:8081/api/queues/q1
+Content-Type: application/json
+
+{
+    "name": "qqq",
+    "change": 0
+}
+
+###
+GET http://localhost:8081/api/queues/q1
