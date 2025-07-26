@@ -176,6 +176,20 @@ output application/json
 		<logger level="INFO" message="get:\storage:storage-api-config" />
     </flow>
 	<flow name="post:\storage:storage-api-config">
+		<set-variable value="#[uuid()]" doc:name="Item" doc:id="7cdcc3b7-6ae3-4d99-ae56-b419e97e2641" variableName="item"/>
+		<os:store doc:name="Store" doc:id="99f135db-1da1-45cc-8f96-e2e79cbddc90" key="#[vars.item]" objectStore="current-storage-store" />
+		<ee:transform doc:name="Transform Message" doc:id="66fe130e-8430-452f-b491-fd1b1d7f7b79" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	message: 'Success',	
+	key: vars.item,
+	value: payload,
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
 		<logger level="INFO" message="post:\storage:storage-api-config" />
     </flow>
 	<flow name="get:\queues:storage-api-config">
