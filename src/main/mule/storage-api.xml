@@ -157,6 +157,7 @@ output application/json
     </flow>
 	<flow name="delete:\storage\(item):storage-api-config">
         <set-variable value="#[attributes.uriParams.'item']" doc:name="Item" doc:id="7fbd6789-bc94-44e7-a786-5e6d1d74ffc4" variableName="item" />
+		<os:remove doc:name="Delete" doc:id="9037a8c6-99a9-4c47-b4dd-2431e74cfd3d" key="#[vars.item]" objectStore="current-storage-store"/>
 		<logger level="INFO" message="delete:\storage\(item):storage-api-config" />
     </flow>
 	<flow name="get:\storage:storage-api-config">
