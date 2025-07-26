@@ -175,12 +175,19 @@ output application/json
 		<logger level="INFO" message="get:\storage:storage-api-config" />
     </flow>
     <flow name="get:\storage\(item):storage-api-config">
-        <ee:transform doc:name="Transform Message">
-            <ee:variables>
-                <ee:set-variable variableName="item">attributes.uriParams.'item'</ee:set-variable>
-            </ee:variables>
-        </ee:transform>
-        <logger level="INFO" message="get:\storage\(item):storage-api-config" />
+        <set-variable value="#[attributes.uriParams.'item']" doc:name="Item" doc:id="6935246f-712d-4ce2-933a-3e927eee04de" variableName="item" />
+		<os:retrieve doc:name="Retrieve" doc:id="e9fdc417-76ee-4ee6-b941-ac542ca5b872" key="#[vars.item]" objectStore="current-storage-store">
+			<os:default-value ><![CDATA[#[{}]]]></os:default-value>
+		</os:retrieve>
+		<ee:transform doc:name="Transform Message" doc:id="437b1bb0-e1bd-402f-90c3-2fab193fd4da" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" message="get:\storage\(item):storage-api-config" />
     </flow>
     <flow name="get:\queues\(queue):storage-api-config">
         <ee:transform doc:name="Transform Message">

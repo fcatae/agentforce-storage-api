@@ -10,3 +10,6 @@ Content-Type: application/json
     "name": "abc",
     "score": 1
 }
+
+###
+GET http://localhost:8081/api/storage/teste
